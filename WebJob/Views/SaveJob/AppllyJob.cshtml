@@ -1,0 +1,141 @@
+﻿@model WebJob.Models.ViewModels.ApplicationViewModel
+@{
+    ViewBag.Title = "Ứng tuyển việc làm";
+    Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
+}
+<div class="clearfix"></div>
+
+<!-- Banner quảng cáo -->
+<div class="container-fluid my-4">
+    <div class="container">
+        <div class="home-ads text-center">
+            <a href="#">
+                <img src="~/Content/assets/img/hna2.jpg" alt="Advertisement" class="img-fluid rounded shadow-sm">
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Form ứng tuyển -->
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header text-white">
+
+                    <h4 class="mb-0"><i class="fa fa-file-text-o mr-2"></i>Ứng tuyển việc làm</h4>
+                </div>
+                @if (!Model.IsProfileComplete)
+                {
+                    <div class="alert alert-warning">
+                        <strong>Lưu ý:</strong> Hãy cập nhật thông tin cá nhân đầy đủ để tăng cơ hội khi ứng tuyển.
+                        <a href="@Url.Action("MyProfile", "Profile")" class="alert-link">Cập nhật ngay</a>
+                    </div>
+                }
+                <div class="card-body">
+                    @using (Html.BeginForm("AppllyJob", "SaveJob", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="jobId" value="@Request.QueryString["jobId"]" />
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label text-right font-weight-bold">Họ tên<span class="text-danger"> *</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" name="FullName" class="form-control" placeholder="Nhập họ và tên" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label text-right font-weight-bold">Số điện thoại</label>
+                            <div class="col-sm-9">
+                                <input type="tel" name="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label text-right font-weight-bold">Email<span class="text-danger"> *</span></label>
+                            <div class="col-sm-9">
+                                <input type="email" name="Email" class="form-control" placeholder="Nhập Email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label text-right font-weight-bold">Lời giới thiệu<span class="text-danger"> *</span></label>
+                            <div class="col-sm-9">
+                                <textarea name="CoverLetter" class="form-control" placeholder="Viết một lời giới thiệu ngắn gọn..." style="height: 150px;" required></textarea>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label text-right font-weight-bold">File đính kèm<span class="text-danger"> *</span></label>
+                            <div class="col-sm-9">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="file" name="CVFilePath" required>
+                                    <label class="custom-file-label" for="file" style="overflow:hidden">Chọn file CV</label>
+                                </div>
+                                <small class="form-text text-muted mt-1">Chấp nhận định dạng .pdf, .doc, .docx (tối đa 5MB).</small>
+                                <p class="output-file mt-2 text-info" id="previewFileName"></p>
+                            </div>
+                        </div>
+
+                        <div id="notification" style="display:none;" class="alert"></div>
+
+                        <div class="text-right mt-4">
+                            <button type="submit" class="btn btn-success px-4 py-2">
+                                <i class="fa fa-paper-plane-o mr-2"></i>Ứng tuyển ngay
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    $(document).ready(function () {
+        $('#file').change(function (e) {
+            var fileName = e.target.files[0].name;
+            $('#previewFileName').text("Đã chọn: " + fileName);
+            $(this).next('.custom-file-label').html(fileName);
+        });
+
+        $('form').submit(function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Đã xảy ra lỗi trong quá trình gửi dữ liệu.");
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .custom-file-label::after {
+        content: "Duyệt";
+    }
+
+    .card-header h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+</style>

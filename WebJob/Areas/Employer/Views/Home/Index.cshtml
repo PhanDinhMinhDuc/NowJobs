@@ -1,0 +1,161 @@
+﻿@model WebJob.Models.ViewModels.EmployerHomeViewModel
+@{
+    ViewBag.Title = "Trang Nhà Tuyển Dụng";
+}
+
+<!-- Hero Section -->
+<section class="hero-section py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Chào mừng đến với NowJobs</h1>
+                <p class="lead mb-4">Nền tảng kết nối nhà tuyển dụng và ứng viên hàng đầu Việt Nam</p>
+
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <div class="d-flex gap-3">
+                        <a href="/Employer/Account/Register" class="btn btn-light btn-lg px-4">Đăng ký miễn phí</a>
+                        <a href="/Employer/Account/Login" class="btn btn-outline-light btn-lg px-4">Đăng nhập</a>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-6">
+                <img src="~/Content/assets/img/employer-hero.jpg" alt="Nhà tuyển dụng" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Giải pháp tuyển dụng toàn diện</h2>
+            <p class="lead text-muted">Nowjobs mang đến cho nhà tuyển dụng mọi công cụ cần thiết</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-light p-3 rounded-circle d-inline-block mb-3">
+                            <i class="fas fa-bolt fa-2x text-primary"></i>
+                        </div>
+                        <h4 class="mb-3">Tuyển dụng nhanh chóng</h4>
+                        <p class="text-muted">Tiếp cận hàng nghìn ứng viên chất lượng chỉ trong vài phút</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-light p-3 rounded-circle d-inline-block mb-3">
+                            <i class="fas fa-chart-line fa-2x text-success"></i>
+                        </div>
+                        <h4 class="mb-3">Hiệu quả vượt trội</h4>
+                        <p class="text-muted">Công cụ thông minh giúp lọc ứng viên phù hợp nhất</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-light p-3 rounded-circle d-inline-block mb-3">
+                            <i class="fas fa-headset fa-2x text-info"></i>
+                        </div>
+                        <h4 class="mb-3">Hỗ trợ 24/7</h4>
+                        <p class="text-muted">Đội ngũ tư vấn luôn sẵn sàng hỗ trợ bạn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dynamic CTA Section -->
+<section class="py-5 bg-light">
+    <div class="container py-5 text-center">
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <div>
+                <h2 class="fw-bold mb-4">Bắt đầu hành trình tuyển dụng ngay hôm nay</h2>
+                <p class="lead mb-4">Đăng ký tài khoản miễn phí và đăng tin tuyển dụng chỉ với vài cú click</p>
+                <a href="/Account/Register" class="btn btn-primary btn-lg px-5">Đăng ký ngay</a>
+            </div>
+        }
+        else if (!Model.IsVerified)
+        {
+            <div>
+                <h2 class="fw-bold mb-4">Xác thực tài khoản để bắt đầu đăng tin</h2>
+                <p class="lead mb-4">Hoàn tất xác thực doanh nghiệp để mở khóa mọi tính năng tuyển dụng</p>
+                <a href="/Employer/Employer/VerificationDetails" class="btn btn-primary btn-lg px-5">Xác thực ngay</a>
+            </div>
+        }
+        else if (!Model.HasActivePackage)
+        {
+            <div>
+                <h2 class="fw-bold mb-4">Nâng cấp gói dịch vụ của bạn</h2>
+                <p class="lead mb-4">Lựa chọn gói dịch vụ phù hợp để tiếp cận nhiều ứng viên chất lượng hơn</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/Employer/Package" class="btn btn-primary btn-lg px-5">Xem các gói dịch vụ</a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div>
+                <h2 class="fw-bold mb-4">Đăng tin tuyển dụng mới ngay bây giờ</h2>
+                <p class="lead mb-4">Tiếp cận ngay với hàng nghìn ứng viên tiềm năng</p>
+                <a href="/Employer/Jobs/Add" class="btn btn-primary btn-lg px-5">Đăng tin ngay</a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <h3 class="display-4 fw-bold text-primary">10,000+</h3>
+                <p class="text-muted">Doanh nghiệp tin dùng</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="display-4 fw-bold text-primary">500,000+</h3>
+                <p class="text-muted">Ứng viên chất lượng</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="display-4 fw-bold text-primary">95%</h3>
+                <p class="text-muted">Hài lòng với dịch vụ</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="display-4 fw-bold text-primary">24/7</h3>
+                <p class="text-muted">Hỗ trợ khách hàng</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section styles {
+    <style>
+        .hero-section {
+        }
+
+        .feature-card {
+            transition: transform 0.3s;
+        }
+
+            .feature-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .cta-section {
+            background-color: #f8f9fa;
+            background-image: url('/Content/images/cta-bg.png');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+}

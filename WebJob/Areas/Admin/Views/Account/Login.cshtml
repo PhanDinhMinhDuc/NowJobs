@@ -1,0 +1,103 @@
+﻿@model WebJob.Models.LoginViewModel
+@{
+    ViewBag.Title = "Đăng nhập";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f9;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input {
+            width: 100%;
+            padding: 12px 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        a {
+            font-size: 13px;
+            color: #007bff;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Đăng nhập quản trị</h2>
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            @Html.TextBoxFor(x => x.UserName, new { @class = "input", @placeholder = "Tên đăng nhập" })
+            @Html.PasswordFor(x => x.Password, new { @class = "input", @placeholder = "Mật khẩu" })
+            <a href="#">Quên mật khẩu?</a>
+            <button type="submit">Đăng nhập</button>
+        }
+    </div>
+</body>
+</html>

@@ -1,0 +1,451 @@
+﻿@using WebJob.Common
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NowJobs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Roboto Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i&display=swap" rel="stylesheet">
+
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/css/bootstrap.min.css">
+
+
+
+    <!-- Font Awesome -->
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
+
+    <!-- select 2 css -->
+    <link rel="stylesheet" href="~/Content/assets/css/select2.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Owl Stylesheets -->
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <link rel="stylesheet" href="~/Content/assets/css/owlcarousel/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/Content/assets/css/owlcarousel/owl.theme.default.min.css">
+    <!-- main css -->
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/css/main.css">
+    <link href="~/Content/assets/css/Style1.css" rel="stylesheet" />
+    <link href="~/Content/assets/css/layout.css" rel="stylesheet" />
+    <script src="~/Content/assets/js/jquery-3.4.1.slim.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body>
+
+
+
+    <!-- main nav -->
+    <div class="container-fluid fluid-nav ">
+        <div class="container cnt-tnar">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light tjnav-bar">
+                <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+                <a href="/trang-chu" class="nav-logo">
+                    <img src="~/Content/assets/img/logojobtran.png">
+                </a>
+                <button class="navbar-toggler tnavbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <!-- <span class="navbar-toggler-icon"></span> -->
+                    <i class="fa fa-bars icn-res" aria-hidden="true"></i>
+
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                    @Html.Action("MenuTop", "Menu")
+
+
+                    <ul class="navbar-nav mr-auto my-2 my-lg-0 tnav-right tn-nav">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/SaveJob/Index">
+                                @*<i class="fa fa-bell" aria-hidden="true"></i>*@
+                                <i class="fa-solid fa-bookmark"></i>
+                                <span id="checkout_items" class="notification-badge">0</span> <!-- Số lượng thông báo -->
+                                <span class="hidden-text">Thông báo</span>
+                            </a>
+                        </li>
+                        <ul class="navbar-nav ml-auto">
+                            @if (Request.IsAuthenticated)
+                            {
+                                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { @id = "logOffDForm" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                }
+
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                        @User.Identity.Name
+                                    </a>
+                                    <div class="dropdown-menu tdropdown" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="@Url.Action("MyProfile", "Profile")">Hồ sơ của tôi</a>
+                                        <a class="dropdown-item" href="@Url.Action("MyAppliedJobs", "MyApplicant")">Xem danh sách đã ứng tuyển</a>
+                                        <a class="dropdown-item" href="/SaveJob/Index">Công việc dã lưu</a>
+                                        <a class="dropdown-item" href="javascript:document.getElementById('logOffDForm').submit()">Đăng xuất</a>
+                                    </div>
+                                </li>
+
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/account/register">Đăng Ký</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/account/login">Đăng Nhập</a>
+                                </li>
+                            }
+                        </ul>
+                        <li class="nav-item">
+                            <a class="nav-link btn-employers"
+                               href="~/Employer/Account/Login"
+                               tabindex="-1"
+                               aria-disabled="true">
+                                Nhà Tuyển Dụng
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- (end) main nav -->
+
+    <div class="clearfix"></div>
+
+    <!-- main banner -->
+    <div class="container-fluid clear-left clear-right">
+        <div class="main-banner">
+            <div class="banner-image">
+                <img src="~/Content/assets/img/banner2.jpg" alt="banner-image">
+            </div>
+        </div>
+        @*<div class="banner-content">
+                <h3>Hơn 1000+ dành cho bạn</h3>
+
+            </div>*@
+    </div>
+    <!-- (end) main banner -->
+    <!-- search section -->
+    <div class="container-fluid search-fluid">
+        <div class="container">
+            <div class="search-wrapper" style="margin-top: -11rem;">
+
+                <ul class="nav nav-tabs search-nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item search-nav-item">
+                        <a class="nav-link snav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Tìm việc làm</a>
+                    </li>
+                    <li class="nav-item search-nav-item">
+                        <a class="nav-link snav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Tìm công ty</a>
+                    </li>
+                </ul>
+                <div class="tab-content search-tab-content" id="myTabContent">
+                    <!-- content tab 1 -->
+                    @*Search*@
+                    @Html.Action("SearchView", "Search")
+                    <!-- (end) content tab 1 -->
+                    <!-- content tab 2 -->
+                    @*<div class="tab-pane stab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <form class="bn-search-form">
+                                <div class="row">
+                                    <div class="col-md-10 col-sm-12">
+                                        <div class="input-group s-input-group w-100">
+                                            <input type="text" class="form-control sinput" placeholder="Nhập tên công ty">
+                                            <span><i class="fa fa-search"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-12">
+                                        <button type="submit" class="btn btn-primary btn-search col-sm-12">Tìm kiếm</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>*@
+                    <!-- (end) content tab 2 -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- (end) search section -->
+    <!-- Chatbot icon (mới) -->
+    <div id="chat-toggle" class="chatbot-icon">
+        <i class="fa-solid fa-robot"></i>
+        <span>Chatbot</span>
+    </div>
+    <div id="chat-popup">
+        <header>
+            <span>JobBot Assistant</span>
+            <span class="close-btn">&times;</span>
+        </header>
+        <div id="chat-body"></div>
+        <div id="chat-footer">
+            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." />
+            <button id="send-btn">Gửi</button>
+        </div>
+    </div>
+    <!-- Icon chat -->
+    <div id="chatIcon" class="chat-icon">
+        <i class="fa-solid fa-headset support-ticket-launcher__icon"></i>
+        <span>Hỗ trợ</span>
+    </div>
+
+    <!-- Chat box -->
+    <div id="chatBox" style="display: none; position: fixed; bottom: 160px; right: 60px; width: 320px; height: 450px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); z-index: 1000; overflow: hidden; font-family: 'Segoe UI', sans-serif;">
+        <!-- Tin nhắn -->
+        <div id="messagesContainer" style="height: 85%; overflow-y: auto; padding: 15px; background-color: #ffffff; border-bottom: 1px solid #eee;"></div>
+
+        <!-- Gửi tin -->
+        <form id="sendMessageForm" style="padding: 12px; display: flex; gap: 8px; background-color: #f0f2f5;">
+            <textarea name="content" required placeholder="Nhập tin nhắn..." style="flex: 1; resize: none; border: 1px solid #ccc; border-radius: 10px; padding: 8px 12px; font-size: 14px; min-height: 40px;"></textarea>
+            <button type="submit" style="background: #007bff; color: #fff; border: none; padding: 0 16px; border-radius: 10px; font-size: 14px; cursor: pointer; transition: background 0.3s;">Gửi</button>
+        </form>
+    </div>
+    @RenderBody();
+    <!-- job support -->
+    <div class="container-fluid job-support-wrapper">
+        <div class="container-fluid job-support-wrap">
+            <div class="container job-support">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 col-12">
+                        <ul class="spp-list">
+                            <li>
+                                <span><i class="fa fa-question-circle pr-2 icsp"></i>Hỗ trợ nhà tuyển dụng:</span>
+                            </li>
+                            <li>
+                                <span><i class="fa fa-phone pr-2 icsp"></i>@SettingHelper.GetValue("SettingHotline")</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    @* nhận mail đăng ký *@
+                    @Html.Action("Partial_Subcrice", "Home")
+                </div>
+            </div>
+        </div>
+        <button id="backToTop" class="back-to-top" title="Quay lại đầu trang">↑</button>
+    </div>
+
+
+    <style>
+        /* CSS cho nút quay lại lên đầu trang */
+
+    </style>
+    <script>
+        // Khi cuộn xuống một khoảng nhất định, hiển thị nút
+        window.onscroll = function () {
+            var backToTopBtn = document.getElementById("backToTop");
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        };
+
+        // Khi bấm vào nút, cuộn lại lên đầu trang
+        document.getElementById("backToTop").onclick = function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // Cuộn mượt
+            });
+        };
+    </script>
+
+    <!-- (end) job support -->
+    <!-- footer -->
+    <div class="container-fluid footer-wrap  clear-left clear-right">
+        <div class="container footer">
+            <div class="row">
+                <div class="col-md-4 col-sm-8 col-12">
+                    <h2 class="footer-heading">
+                        <span>Về chúng tôi</span>
+                    </h2>
+                    <p class="footer-content">
+                        Nền tảng kết nối nhà tuyển dụng và ứng viên nhanh chóng, hiệu quả và tối ưu chi phí.
+                    </p>
+                    <ul class="footer-contact">
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-phone fticn"></i> +123 456 7890
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-envelope fticn"></i>
+                                admin@nowjobs.com
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-map-marker fticn"></i>
+                                Thừa Thiên Huế, TP Huế
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 col-sm-6 col-12">
+                    <h2 class="footer-heading">
+                        <span>Ngành nghề</span>
+                    </h2>
+                    <ul class="footer-list">
+                        <li><a href="#"></a></li>
+                        <li><a href="#">Bất động sản</a></li>
+                        <li><a href="#">Công nghệ thông tin</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 col-sm-12 col-12">
+                    <h2 class="footer-heading">
+                        <span>Tất cả tỉnh thành</span>
+                    </h2>
+                    <ul class="footer-list">
+                        <li><a href="#">Hồ Chính Minh</a></li>
+                        <li><a href="#">Hà Nội</a></li>
+                        <li><a href="#">Đà Nẵng</a></li>
+                        <li><a href="#">Buôn Ma Thuột</a></li>
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="container-fluid copyright-wrap">
+        <div class="container copyright">
+            <p class="copyright-content">
+                Copyright © 2024 <a href="#"> Now<b>Jobs</b></a>. All Right Reserved.
+            </p>
+        </div>
+    </footer>
+
+
+    <!-- (end) footer -->
+    @*@Scripts.Render("~/bundles/jquery")*@
+
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>*@
+    <script type="text/javascript" src="~/Content/assets/js/readmore.js"></script>
+    <script type="text/javascript">
+        $('.catelog-list').readmore({
+            speed: 75,
+            maxHeight: 150,
+            moreLink: '<a href="#">Xem thêm<i class="fa fa-angle-down pl-2"></i></a>',
+            lessLink: '<a href="#">Rút gọn<i class="fa fa-angle-up pl-2"></i></a>'
+        });
+    </script>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- Optional JavaScript -->
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jsSaveJob.js"></script>
+    <script src="~/Scripts/chatbox.js"></script>
+    @*<script src="~/Scripts/chatbot-assistant.js"></script>*@
+    <script src="~/Content/assets/js/popper.min.js"></script>
+    <script src="~/Content/assets/js/bootstrap.min.js"></script>
+    <script src="~/Content/assets/js/select2.min.js"></script>
+    <script src="~/Content/assets/js/jobdata.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <!-- <script type="text/javascript" src="js/pagination.js"></script> -->
+    <!-- Owl Stylesheets Javascript -->
+    <script src="~/Content/assets/js/owlcarousel/owl.carousel.js"></script>
+    <!-- Read More Plugin -->
+    <script>
+        const toggleBtn = document.getElementById('chat-toggle');
+        const popup = document.getElementById('chat-popup');
+        const closeBtn = popup.querySelector('.close-btn');
+        const chatBody = document.getElementById('chat-body');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        toggleBtn.addEventListener('click', () => {
+            popup.style.display = 'flex';
+            chatInput.focus();
+        });
+
+        closeBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+        function appendMessage(text, cls) {
+            const msg = document.createElement('div');
+            msg.classList.add('message', cls);
+            msg.textContent = text;
+            chatBody.appendChild(msg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            chatInput.value = '';
+
+            // Call our secure backend instead of direct API
+            callBackendChatbot(text);
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        async function callBackendChatbot(userPrompt) {
+            debugger;
+            appendMessage('Đang xử lý...', 'bot');
+
+            try {
+                // Lấy token từ form có sẵn trong trang hoặc tạo mới
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                const response = await fetch('/Chatbot/SendMessage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ message: userPrompt })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const lastBot = chatBody.querySelector('.bot:last-child');
+                if (lastBot && lastBot.textContent === 'Đang xử lý...') {
+                    lastBot.remove();
+                }
+
+                if (data.success) {
+                    appendMessage(data.reply, 'bot');
+                } else {
+                    appendMessage('Lỗi: ' + (data.error || 'Không có phản hồi.'), 'bot');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                const lastBot = chatBody.querySelector('.bot:last-child');
+                if (lastBot && lastBot.textContent === 'Đang xử lý...') {
+                    lastBot.remove();
+                }
+                appendMessage('Lỗi kết nối với hệ thống. Vui lòng thử lại sau.', 'bot');
+            }
+        }
+    </script>
+    @RenderSection("scripts", required: false)
+
+
+
+</body>
+
+</html>

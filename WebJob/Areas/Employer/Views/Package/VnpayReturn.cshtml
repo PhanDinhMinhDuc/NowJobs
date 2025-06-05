@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "VnpayReturn";
+    Layout = "~/Areas/Employer/Views/Shared/_LayoutEmpty.cshtml";
+}
+<style>
+    .search-wrapper {
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 50px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h1.text-center {
+        color: #2c3e50;
+        margin-bottom: 30px;
+    }
+
+    p.text-center {
+        font-size: 18px;
+        color: #34495e;
+    }
+
+    #show_success {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 16px;
+        color: green;
+    }
+
+</style>
+<div class="container-fluid">
+    <div class="container search-wrapper">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Thanh toán</h1>
+                @if (ViewBag.Message != null)
+                {
+                    <p class="text-center">@ViewBag.Message !</p>
+                }
+                <p style="font-weight:bold; color: red; text-align: center; font-size: 20px; margin-top: 20px"> @ViewBag.InnerText</p>
+            </div>
+
+        </div>
+        <hr />
+
+        <div class="row">
+            <div id="show_success"></div>
+
+
+        </div>
+
+    </div>
+</div>

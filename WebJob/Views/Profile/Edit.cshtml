@@ -1,0 +1,106 @@
+﻿@model WebJob.Models.ViewModels.CandidateProfileViewModel
+@{
+    ViewBag.Title = "Chỉnh sửa hồ sơ";
+    Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="mb-4 text-primary">@ViewBag.Title</h2>
+
+    @using (Html.BeginForm("Edit", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="row">
+            <!-- Cột trái: Avatar và file upload -->
+            <div class="col-md-4">
+                <div class="form-group text-center">
+                    @if (!string.IsNullOrEmpty(Model.AvatarPath))
+                    {
+                        <img src="@Model.AvatarPath" id="avatarPreview" class="img-thumbnail mb-3" style="width: 200px; height: 200px; object-fit: cover;" alt="Ảnh đại diện" />
+                    }
+                    else
+                    {
+                        <div id="avatarPreview" class="img-thumbnail mb-3 d-flex align-items-center justify-content-center" style="width: 200px; height: 200px; background-color: #f0f0f0;">
+                            <i class="fa fa-user fa-5x text-muted"></i>
+                        </div>
+                    }
+                    @Html.LabelFor(model => model.AvatarFile, "Ảnh đại diện")
+                    @Html.TextBoxFor(model => model.AvatarFile, new { @class = "form-control", type = "file", accept = "image/*" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CVFile, "CV (PDF)")
+                    @Html.TextBoxFor(model => model.CVFile, new { @class = "form-control", type = "file", accept = ".pdf" })
+                    @if (!string.IsNullOrEmpty(Model.CVPath))
+                    {
+                        <small class="form-text text-muted">CV hiện tại: <a href="@Model.CVPath" target="_blank">Xem CV</a></small>
+                    }
+                </div>
+            </div>
+
+            <!-- Cột phải: Thông tin -->
+            <div class="col-md-8">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ExperienceID, "Kinh nghiệm")
+                    @Html.DropDownListFor(model => model.ExperienceID, Model.Experiences, "-- Chọn kinh nghiệm --", new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PositionID, "Vị trí")
+                    @Html.DropDownListFor(model => model.PositionID, Model.Positions, "-- Chọn vị trí --", new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LocationID, "Địa điểm")
+                    @Html.DropDownListFor(model => model.LocationID, Model.Locations, "-- Chọn địa điểm --", new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.JobCategoryID, "Ngành nghề")
+                    @Html.DropDownListFor(model => model.JobCategoryID, Model.JobCategories, "-- Chọn ngành nghề --", new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SkillIDs, "Kỹ năng")
+                    @Html.ListBoxFor(model => model.SkillIDs, Model.Skills, new { @class = "form-control select2", multiple = "multiple" })
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    @Html.ActionLink("Hủy", "MyProfile", null, new { @class = "btn btn-secondary" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Khởi tạo select2 cho multiselect skills
+            $('.select2').select2({
+                placeholder: "Chọn kỹ năng",
+                allowClear: true
+            });
+
+            // Xem trước ảnh đại diện khi chọn file
+            $("#AvatarFile").change(function () {
+                readURL(this, '#avatarPreview');
+            });
+        });
+
+        function readURL(input, previewId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $(previewId).html('<img src="' + e.target.result + '" class="img-thumbnail" style="width: 200px; height: 200px; object-fit: cover;" />');
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

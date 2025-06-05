@@ -1,0 +1,93 @@
+﻿@model WebJob.Models.EF.CandidateProfile
+@{
+    ViewBag.Title = "Hồ sơ của tôi";
+    Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="mb-4 text-primary">@ViewBag.Title</h2>
+
+    <div class="row">
+        <!-- Cột trái: Avatar và nút chỉnh sửa -->
+        <div class="col-md-4 text-center">
+            @if (!string.IsNullOrEmpty(Model.AvatarPath))
+            {
+                <img src="@Model.AvatarPath" class="img-thumbnail mb-3" style="width: 200px; height: 200px; object-fit: cover;" alt="Ảnh đại diện" />
+            }
+            else
+            {
+                <div class="img-thumbnail mb-3 d-flex align-items-center justify-content-center" style="width: 200px; height: 200px; background-color: #f0f0f0;">
+                    <i class="fa fa-user fa-5x text-muted"></i>
+                </div>
+            }
+
+            @Html.ActionLink("✏️ Chỉnh sửa hồ sơ", "Edit", null, new { @class = "btn btn-primary btn-block mt-2" })
+        </div>
+
+        <!-- Cột phải: Thông tin chi tiết -->
+        <div class="col-md-8">
+            <!-- Thông tin cá nhân -->
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">
+                    <i class="fa fa-user"></i> Thông tin cá nhân
+                </div>
+                <div class="card-body">
+                    <p><strong>👤 Tên:</strong> @Model.User.FullName</p>
+                    <p><strong>📧 Email:</strong> @Model.User.Email</p>
+                    <p><strong>📞 Số điện thoại:</strong> @Model.User.Phone</p>
+                </div>
+            </div>
+
+            <!-- Thông tin nghề nghiệp -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <i class="fa fa-briefcase"></i> Thông tin nghề nghiệp
+                </div>
+                <div class="card-body">
+                    <p><strong>💼 Kinh nghiệm:</strong> @(Model.Experience?.ExperienceLevel ?? "Chưa cập nhật")</p>
+                    <p><strong>📌 Vị trí:</strong> @(Model.Position?.PositionName ?? "Chưa cập nhật")</p>
+                    <p><strong>📍 Địa điểm:</strong> @(Model.Location?.LocationName ?? "Chưa cập nhật")</p>
+                    <p><strong>📂 Ngành nghề:</strong> @(Model.JobCategory?.CategoryName ?? "Chưa cập nhật")</p>
+                </div>
+            </div>
+
+            <!-- Kỹ năng -->
+            <div class="card mb-3">
+                <div class="card-header bg-warning text-dark">
+                    <i class="fa fa-lightbulb-o"></i> Kỹ năng
+                </div>
+                <div class="card-body">
+                    @if (Model.CandidateProfileSkills != null && Model.CandidateProfileSkills.Any())
+                    {
+                        foreach (var skill in Model.CandidateProfileSkills.Select(cps => cps.Skill))
+                        {
+                            <span class="badge badge-primary mr-1 mb-1 p-2">@skill.JobSkillName</span>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Chưa có kỹ năng nào được thêm</p>
+                    }
+                </div>
+            </div>
+
+            <!-- CV -->
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <i class="fa fa-file-pdf-o"></i> CV
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.CVPath))
+                    {
+                        <a href="@Model.CVPath" target="_blank" class="btn btn-success mr-2"><i class="fa fa-eye"></i> Xem CV</a>
+                        <a href="@Model.CVPath" download class="btn btn-outline-secondary"><i class="fa fa-download"></i> Tải xuống</a>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Chưa có CV được tải lên</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

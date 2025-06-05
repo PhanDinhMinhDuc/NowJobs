@@ -1,0 +1,219 @@
+﻿.fx {
+    position: fixed;
+    margin-top: -95px;
+}
+
+.icn-res {
+    color: #000;
+    border: none;
+}
+
+.nav-item {
+    position: relative; /* Để định vị tooltip */
+}
+.notification-badge {
+    position: absolute;
+    top: -10px; /* Điều chỉnh vị trí trên trục dọc */
+    right: -10px; /* Điều chỉnh vị trí trên trục ngang */
+    background-color: red; /* Màu nền cho thông báo */
+    color: white; /* Màu chữ */
+    border-radius: 50%; /* Hình dạng tròn */
+    padding: 0 6px; /* Khoảng cách giữa số và viền */
+    font-size: 12px; /* Kích thước chữ */
+    line-height: 20px; /* Căn chỉnh chữ với hình tròn */
+    text-align: center; /* Căn giữa chữ */
+    display: inline-block; /* Để có thể căn giữa chữ trong hình tròn */
+}
+
+.job-item {
+    display: flex; /* Hiển thị hình ảnh và thông tin công việc theo hàng ngang */
+    margin-bottom: 20px; /* Khoảng cách giữa các công việc */
+    /*align-items: center;*/
+}
+
+
+.job-image {
+    width: 50px; /* Kích thước hình ảnh */
+    height: 50px; /* Kích thước hình ảnh */
+    border-radius: 4px; /* Bo tròn các góc của hình ảnh */
+    margin-right: 10px; /* Khoảng cách giữa hình ảnh và thông tin */
+}
+
+.job-info {
+    flex-grow: 1; /* Để thông tin công việc chiếm không gian còn lại */
+}
+
+.job-name {
+    display: block; /* Hiển thị tên công việc */
+    font-weight: bold; /* Làm đậm tên công việc */
+    text-align: left;
+}
+
+.job-salary {
+    display: block; /* Hiển thị mức lương */
+    color: #666; /* Màu chữ cho mức lương */
+    text-align: left;
+}
+
+.btn-remove {
+    background-color: #f44336; /* Màu nền cho nút xóa */
+    color: white; /* Màu chữ cho nút xóa */
+    border: none; /* Loại bỏ viền của nút xóa */
+    padding: 5px 10px; /* Khoảng cách bên trong nút xóa */
+    border-radius: 4px; /* Bo tròn các góc của nút xóa */
+    cursor: pointer; /* Con trỏ khi di chuột vào nút xóa */
+}
+
+    .btn-remove:hover {
+        background-color: #c62828; /* Thay đổi màu nền khi di chuột vào nút xóa */
+    }
+/* menu đăng nhập*/
+.user-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+}
+
+    .user-icon i {
+        font-size: 24px;
+        color: #333;
+    }
+
+    .user-icon:hover {
+        color: #007bff;
+    }
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+.dropdown-item {
+    font-size: 14px;
+    padding: 10px 15px;
+}
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #007bff;
+    }
+
+.main-sidebar {
+    position: fixed;
+    z-index: 1030;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    text-decoration: none !important;
+}
+.brand-image {
+    height: 30px !important;
+    width: auto !important;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.brand-text {
+    font-family: 'Roboto', sans-serif;
+    color: #343a40 !important;
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
+    white-space: nowrap;
+}
+.content-wrapper {
+    margin-left: 250px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+
+.user-panel {
+    border-bottom: 1px solid #4b545c;
+}
+
+.nav-sidebar .nav-item > .nav-link {
+    margin-bottom: 0.2rem;
+}
+
+.nav-sidebar .nav-link.active {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.avatar-circle-sm {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.avatar-text {
+    font-size: 16px;
+}
+
+.avatar-text-sm {
+    font-size: 12px;
+}
+
+/* User menu dropdown */
+.user-menu .dropdown-menu {
+    width: 200px;
+    padding: 0;
+    border: none;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.user-menu .dropdown-item {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+    .user-menu .dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    .user-menu .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+/* Notification badge */
+.navbar-badge {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 0.6rem;
+}
+.brand-link.column-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+    .brand-link.column-layout .brand-image {
+        margin-bottom: 0.25rem;
+    }
+
+    .brand-link.column-layout .brand-text {
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }

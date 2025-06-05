@@ -1,0 +1,180 @@
+﻿@model WebJob.Models.EF.Company
+
+<div class="modal-header">
+    <h5 class="modal-title" id="modalTitle">@(Model.CompanyID == 0 ? "Thêm mới công ty" : "Chỉnh sửa công ty")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <ul class="nav nav-tabs" id="companyTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Thông tin công ty</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="images-tab" data-toggle="tab" href="#images" role="tab" aria-controls="images" aria-selected="false">Hình ảnh</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="companyTabsContent">
+        <!-- Info Tab -->
+        <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+            @using (Html.BeginForm("Save", "Company", FormMethod.Post, new { id = "companyForm", enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.CompanyID)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyName)
+                    @Html.TextBoxFor(model => model.CompanyName, new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(model => model.CompanyName)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyDescription)
+                    @Html.TextAreaFor(model => model.CompanyDescription, new { @class = "form-control", rows = "4" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyEmail)
+                    @Html.TextBoxFor(model => model.CompanyEmail, new { @class = "form-control", type = "email" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CompanyAddress)
+                    @Html.TextBoxFor(model => model.CompanyAddress, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive)
+                    @Html.CheckBoxFor(model => model.IsActive, new { @class = "form-check-input" })
+                </div>
+            }
+        </div>
+
+        <!-- Images Tab -->
+        <div class="tab-pane fade" id="images" role="tabpanel" aria-labelledby="images-tab">
+            <div class="form-group">
+                <label>Thêm hình ảnh</label>
+                <input type="file" name="images" multiple class="form-control-file" id="companyImages" />
+            </div>
+
+            <div class="row" id="imagePreview">
+                @if (Model.CompanyImages != null && Model.CompanyImages.Any())
+                {
+                    foreach (var image in Model.CompanyImages)
+                    {
+                        <div class="col-md-3 mb-3 image-item" data-id="@image.CompanyImageID">
+                            <img src="@image.ImageURL" class="img-thumbnail" style="width:100%; height:150px; object-fit:cover;" />
+                            <div class="text-center mt-2">
+                                <button class="btn btn-sm @(image.IsDefault ? "btn-success" : "btn-outline-secondary") set-default" data-id="@image.CompanyImageID">
+                                    @(image.IsDefault ? "Mặc định" : "Đặt mặc định")
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-image" data-id="@image.CompanyImageID">Xóa</button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+    <button type="button" class="btn btn-primary" id="btnSave">Lưu</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Handle image preview
+        $('#companyImages').change(function () {
+            var files = this.files;
+            var html = '';
+
+            for (var i = 0; i < files.length; i++) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    html += '<div class="col-md-3 mb-3 image-item">';
+                    html += '<img src="' + e.target.result + '" class="img-thumbnail" style="width:100%; height:150px; object-fit:cover;" />';
+                    html += '<div class="text-center mt-2">';
+                    html += '<button class="btn btn-sm btn-outline-secondary set-default">Đặt mặc định</button>';
+                    html += '<button class="btn btn-sm btn-danger delete-image">Xóa</button>';
+                    html += '</div></div>';
+
+                    $('#imagePreview').append(html);
+                    html = '';
+                };
+                reader.readAsDataURL(files[i]);
+            }
+        });
+
+        // Save company
+        $('#btnSave').click(function () {
+            var formData = new FormData($('#companyForm')[0]);
+
+            // Append image files
+            var imageFiles = $('#companyImages')[0].files;
+            for (var i = 0; i < imageFiles.length; i++) {
+                formData.append('images', imageFiles[i]);
+            }
+
+            $.ajax({
+                url: $('#companyForm').attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                }
+            });
+        });
+
+        // Set default image
+        $(document).on('click', '.set-default', function (e) {
+            e.preventDefault();
+            var imageId = $(this).data('id');
+            var companyId = $('#CompanyID').val();
+
+            $.ajax({
+                url: '/admin/company/setdefaultimage',
+                type: 'POST',
+                data: { companyId: companyId, imageId: imageId },
+                success: function (response) {
+                    if (response.success) {
+                        $('.set-default').removeClass('btn-success').addClass('btn-outline-secondary').text('Đặt mặc định');
+                        $(e.target).removeClass('btn-outline-secondary').addClass('btn-success').text('Mặc định');
+                    }
+                }
+            });
+        });
+
+        // Delete image
+        $(document).on('click', '.delete-image', function (e) {
+            e.preventDefault();
+            var imageId = $(this).data('id');
+
+            if (confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')) {
+                $.ajax({
+                    url: '/admin/company/deleteimage',
+                    type: 'POST',
+                    data: { id: imageId },
+                    success: function (response) {
+                        if (response.success) {
+                            $('.image-item[data-id="' + imageId + '"]').remove();
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>

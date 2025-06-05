@@ -1,0 +1,483 @@
+﻿@{
+    ViewBag.Title = "VerificationDetails";
+}
+@model WebJob.Models.EmployerVerificationViewModel
+@using WebJob.Models.Enum
+<!-- Modal -->
+<div class="modal fade" id="verificationModal" tabindex="-1" role="dialog" aria-labelledby="verificationModalLabel" aria-hidden="true" style="z-index: 99999;">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="verificationModalLabel">
+                    <i class="fas fa-user-check mr-2"></i>Xác thực thông tin nhà tuyển dụng
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle mr-2"></i>Vui lòng cung cấp thông tin chính xác để xác thực tài khoản của bạn.
+                </div>
+
+                @using (Html.BeginForm("VerifyEmployer", "Employer", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", @id = "verificationForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mb-4">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>Vui lòng kiểm tra lại các thông tin bên dưới.
+                            @Html.ValidationSummary(true, "", new { @class = "mt-2" })
+                        </div>
+                    }
+
+                    <div class="form-group mb-4">
+                        @Html.LabelFor(m => m.CompanyName, "Tên công ty", new { @class = "control-label font-weight-bold" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            </div>
+                            <input type="hidden" id="CompanyId" name="CompanyId" value="@(Model?.CompanyId)" />
+                            @Html.TextBoxFor(m => m.CompanyName, new
+                            {
+                                @class = "form-control form-control-lg",
+                                placeholder = "Nhập tên công ty hoặc chọn từ danh sách",
+                                @required = "required",
+                                id = "CompanyNameAutoComplete"
+                            })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.CompanyName, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <!-- Các trường khác với cấu trúc tương tự -->
+                    <div class="form-group mb-4">
+                        @Html.LabelFor(m => m.PhoneNumber, "Số điện thoại", new { @class = "control-label font-weight-bold" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            </div>
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control form-control-lg", placeholder = "Nhập số điện thoại liên hệ", @required = "required" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small d-none" })
+                    </div>
+
+                    <div class="form-group mb-4">
+                        @Html.LabelFor(m => m.Email, "Email", new { @class = "control-label font-weight-bold" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            </div>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg", placeholder = "Nhập email liên hệ", @required = "required" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small d-none" })
+                    </div>
+
+                    <div class="form-group mb-4">
+                        @Html.LabelFor(m => m.BusinessLicenseNumber, "Số giấy phép kinh doanh", new { @class = "control-label font-weight-bold" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                            </div>
+                            @Html.TextBoxFor(m => m.BusinessLicenseNumber, new { @class = "form-control form-control-lg", placeholder = "Nhập số giấy phép kinh doanh", @required = "required" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.BusinessLicenseNumber, "", new { @class = "text-danger small d-none" })
+                    </div>
+
+                    <div class="form-group mb-4">
+                        @Html.LabelFor(m => m.VerificationDocumentPath, "Tài liệu xác thực", new { @class = "control-label font-weight-bold" })
+                        <div class="custom-file">
+                            <input type="file" name="VerificationDocument" class="custom-file-input" id="customFile" required>
+                            <label class="custom-file-label form-control-lg" for="customFile">Chọn file...</label>
+                        </div>
+                        <small class="form-text text-muted mt-2">
+                            <i class="fas fa-info-circle mr-1"></i>Chỉ chấp nhận file định dạng PDF, JPG, PNG (tối đa 5MB).
+                        </small>
+                        @Html.ValidationMessageFor(m => m.VerificationDocumentPath, "", new { @class = "text-danger small d-none" })
+                    </div>
+
+                    <div class="form-group text-center mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg px-5 py-3">
+                            <i class="fas fa-paper-plane mr-2"></i>Gửi yêu cầu xác thực
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model != null && !string.IsNullOrEmpty(Model.VerificationDocumentPath))
+{
+    <!-- Modal hiển thị tài liệu xác thực -->
+    <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentModalLabel">Tài liệu xác thực</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="@Url.Content(Model.VerificationDocumentPath)" width="100%" height="500" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="verification-container">
+    <div class="verification-header">
+        <h3><i class="fas fa-id-card mr-2"></i>Thông tin xác thực nhà tuyển dụng</h3>
+        @if (Model == null)
+        {
+            <button class="btn btn-outline-primary" data-toggle="modal" data-target="#verificationModal">
+                <i class="fas fa-plus-circle mr-2"></i>Xác thực ngay
+            </button>
+        }
+    </div>
+
+    @if (Model != null)
+    {
+        <div class="verification-card">
+            <div class="verification-row">
+                <span class="verification-label">Tên nhà tuyển dụng</span>
+                <span class="verification-value">@Model.EmployerName</span>
+            </div>
+            <div class="verification-row">
+                <span class="verification-label">Tên công ty</span>
+                <span class="verification-value">@Model.CompanyName</span>
+            </div>
+            <div class="verification-row">
+                <span class="verification-label">Số điện thoại</span>
+                <span class="verification-value">@Model.PhoneNumber</span>
+            </div>
+            <div class="verification-row">
+                <span class="verification-label">Email</span>
+                <span class="verification-value">@Model.Email</span>
+            </div>
+            <div class="verification-row">
+                <span class="verification-label">Số giấy phép kinh doanh</span>
+                <span class="verification-value">@Model.BusinessLicenseNumber</span>
+            </div>
+            <div class="verification-row">
+                <span class="verification-label">Tài liệu xác thực</span>
+                <span class="verification-value">
+                    @if (!string.IsNullOrEmpty(Model.VerificationDocumentPath))
+                    {
+                        <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#documentModal">
+                            <i class="fas fa-file-alt mr-1"></i> Xem tài liệu
+                        </button>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Chưa có tài liệu</span>
+                    }
+                </span>
+            </div>
+            <div class="verification-row">
+                <span class="verification-label">Trạng thái</span>
+                <span class="verification-value">
+                    @switch (Model.Status)
+                    {
+                        case (int)VerificationStatus.Approved:
+                            <span class="badge badge-pill badge-success py-2 px-3">
+                                <i class="fas fa-check-circle mr-1"></i>Đã xác thực
+                            </span>
+                            break;
+                        case (int)VerificationStatus.Pending:
+                            <span class="badge badge-pill badge-warning py-2 px-3">
+                                <i class="fas fa-clock mr-1"></i>Chờ xác thực
+                            </span>
+                            break;
+                        case (int)VerificationStatus.Rejected:
+                            <span class="badge badge-pill badge-danger py-2 px-3">
+                                <i class="fas fa-times-circle mr-1"></i> Bị từ chối
+                            </span>
+                            break;
+                    }
+                </span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="verification-empty">
+            <div class="empty-icon">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <h4>Bạn chưa gửi thông tin xác thực</h4>
+            <p>Hãy xác thực thông tin để tăng độ tin cậy với ứng viên và mở khóa các tính năng cao cấp</p>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#verificationModal">
+                <i class="fas fa-plus-circle mr-2"></i>Xác thực ngay
+            </button>
+        </div>
+    }
+</div>
+
+<style>
+
+    /* Modal Styles */
+    .modal {
+        z-index: 99999 !important;
+    }
+
+    .modal-header {
+        border-radius: 0;
+        padding: 1.2rem 1.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    .form-control-lg {
+        height: calc(2.5em + 1rem + 2px);
+        padding: 0.5rem 1rem;
+        font-size: 1.1rem;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+    }
+
+    .custom-file-label::after {
+        content: "Duyệt";
+        height: calc(2.5em + 1rem);
+        line-height: 2.3;
+    }
+
+    /* Verification Container */
+    .verification-container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .verification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+        .verification-header h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+    .verification-card {
+        background: #f9fafb;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .verification-row {
+        display: flex;
+        padding: 18px 25px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+        .verification-row:last-child {
+            border-bottom: none;
+        }
+
+    .verification-label {
+        flex: 0 0 250px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .verification-value {
+        flex: 1;
+        color: #333;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+        font-size: 0.9rem;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+        color: #212529;
+        font-size: 0.9rem;
+    }
+
+    /* Empty State */
+    .verification-empty {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: #6c757d;
+        opacity: 0.3;
+        margin-bottom: 20px;
+    }
+
+    .verification-empty h4 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #343a40;
+    }
+
+    .verification-empty p {
+        color: #6c757d;
+        max-width: 500px;
+        margin: 0 auto 25px;
+        font-size: 1.1rem;
+    }
+
+    .ui-autocomplete {
+        position: absolute;
+        z-index: 100000 !important; /* Cao hơn z-index của modal */
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .ui-menu-item {
+        padding: 8px 15px;
+        cursor: pointer;
+    }
+
+        .ui-menu-item:hover {
+            background: #f5f5f5;
+        }
+
+    .ui-state-focus {
+        background: #007bff !important;
+        color: white !important;
+        border: none !important;
+    }
+</style>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        // Hiển thị tên file khi chọn file upload
+        $('.custom-file-input').on('change', function () {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName);
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Autocomplete cho tên công ty
+            $("#CompanyNameAutoComplete").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '@Url.Action("SearchCompanies", "Employer")',
+                        type: "GET",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.CompanyName,
+                                    value: item.CompanyName,
+                                    id: item.CompanyID
+                                };
+                            }));
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $("#CompanyNameAutoComplete").val(ui.item.value);
+                    $("#CompanyId").val(ui.item.id);
+                },
+                focus: function (event, ui) {
+                    event.preventDefault();
+                    $("#CompanyNameAutoComplete").val(ui.item.label);
+                },
+                open: function () {
+                    $(this).autocomplete("widget").css({
+                        "width": $(this).outerWidth() + "px",
+                        "z-index": 100000
+                    });
+                }
+            });
+
+            // Xử lý khi modal hiển thị
+            $('#verificationModal').on('show.bs.modal', function () {
+                // Reset form và validation
+                $('#verificationForm')[0].reset();
+                $('.text-danger').hide();
+                $('.is-invalid').removeClass('is-invalid');
+                $('#CompanyId').val('');
+            });
+            // Xử lý hiển thị validation khi submit form
+            $('#verificationForm').on('submit', function (e) {
+                let form = $(this);
+                let isValid = true;
+
+                // Ẩn tất cả thông báo lỗi trước khi validate
+                form.find('.text-danger').addClass('d-none');
+                form.find('.is-invalid').removeClass('is-invalid');
+                $('.validation-summary').addClass('d-none');
+
+                // Validate từng trường
+                form.find('[required]').each(function () {
+                    if (!$(this).val()) {
+                        isValid = false;
+                        let fieldName = $(this).attr('name');
+                        $(this).addClass('is-invalid');
+                        form.find('[data-valmsg-for="' + fieldName + '"]').removeClass('d-none');
+                    }
+                });
+
+                // Validate file upload
+                let fileInput = $('#customFile')[0];
+                if (fileInput.files.length === 0) {
+                    isValid = false;
+                    $(fileInput).addClass('is-invalid');
+                    form.find('[data-valmsg-for="VerificationDocumentPath"]').removeClass('d-none');
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    $('.validation-summary').removeClass('d-none');
+
+                    // Cuộn đến lỗi đầu tiên
+                    $('html, body').animate({
+                        scrollTop: form.find('.is-invalid').first().offset().top - 100
+                    }, 500);
+                }
+            });
+
+            // Hiển thị tên file khi chọn file upload
+            $('.custom-file-input').on('change', function () {
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+                $(this).removeClass('is-invalid');
+                $(this).closest('.form-group').find('.text-danger').addClass('d-none');
+            });
+
+            // Xử lý khi người dùng bắt đầu nhập liệu
+            $('#verificationForm input').on('input', function () {
+                if ($(this).val()) {
+                    $(this).removeClass('is-invalid');
+                    $(this).closest('.form-group').find('.text-danger').addClass('d-none');
+                }
+            });
+        });
+    </script>
+}

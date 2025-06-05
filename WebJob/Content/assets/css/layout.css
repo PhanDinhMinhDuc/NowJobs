@@ -1,0 +1,315 @@
+﻿#chatBox {
+    transition: all 0.3s ease-in-out;
+}
+#messagesContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+#messagesContainer::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+#chatIcon:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+}
+.job-title a {
+    display: block; /* Đảm bảo là khối */
+    white-space: nowrap; /* Không xuống dòng */
+    overflow: hidden; /* Ẩn phần dư thừa */
+    text-overflow: ellipsis; /* Hiển thị dấu ba chấm */
+    max-width: 200px; /* Đặt chiều rộng tối đa phù hợp */
+    font-size: 16px; /* Kích thước chữ tùy chỉnh */
+    color: #333; /* Màu chữ */
+    text-decoration: none; /* Bỏ gạch chân mặc định */
+}
+
+    .job-title a:hover {
+        text-decoration: underline; /* Hiệu ứng khi rê chuột */
+    }
+
+
+.nav-item {
+    position: relative; /* Để định vị tooltip */
+}
+
+.notification-badge {
+    position: absolute;
+    top: -10px; /* Điều chỉnh vị trí trên trục dọc */
+    right: -10px; /* Điều chỉnh vị trí trên trục ngang */
+    background-color: red; /* Màu nền cho thông báo */
+    color: white; /* Màu chữ */
+    border-radius: 50%; /* Hình dạng tròn */
+    padding: 0 6px; /* Khoảng cách giữa số và viền */
+    font-size: 12px; /* Kích thước chữ */
+    line-height: 20px; /* Căn chỉnh chữ với hình tròn */
+    text-align: center; /* Căn giữa chữ */
+    display: inline-block; /* Để có thể căn giữa chữ trong hình tròn */
+}
+
+.tooltip {
+    display: none; /* Ẩn tooltip mặc định */
+    position: absolute;
+    top: 30px;
+    left: 50%; /* Căn giữa với phần tử cha */
+    transform: translateX(-50%); /* Căn giữa chính xác */
+    background-color: #fff; /* Màu nền của tooltip */
+    color: #333; /* Màu chữ của tooltip */
+    padding: 10px; /* Khoảng cách bên trong tooltip */
+    border-radius: 4px; /* Bo tròn các góc của tooltip */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Đổ bóng cho tooltip */
+    z-index: 1000; /* Đảm bảo tooltip hiển thị trên các phần tử khác */
+    max-width: 800px; /* Kích thước tối đa của tooltip */
+    min-width: 400px; /* Kích thước tối đa của tooltip */
+    opacity: 0; /* Ẩn tooltip cho hiệu ứng chuyển tiếp */
+    transition: opacity 0.3s ease; /* Hiệu ứng chuyển tiếp cho tooltip */
+}
+
+.nav-item:hover .tooltip {
+    display: block; /* Hiển thị tooltip khi di chuột vào phần tử */
+    opacity: 1; /* Hiển thị tooltip khi di chuột vào phần tử */
+}
+
+.tooltip-content {
+    max-height: 800px; /* Kích thước tối đa của phần nội dung */
+    overflow-y: auto; /* Thêm thanh cuộn nếu nội dung vượt quá kích thước */
+}
+
+.job-item {
+    display: flex; /* Hiển thị hình ảnh và thông tin công việc theo hàng ngang */
+    margin-bottom: 20px; /* Khoảng cách giữa các công việc */
+    /*align-items: center;*/
+}
+
+.job-image {
+    width: 50px; /* Kích thước hình ảnh */
+    height: 50px; /* Kích thước hình ảnh */
+    border-radius: 4px; /* Bo tròn các góc của hình ảnh */
+    margin-right: 10px; /* Khoảng cách giữa hình ảnh và thông tin */
+}
+
+.job-info {
+    flex-grow: 1; /* Để thông tin công việc chiếm không gian còn lại */
+}
+
+.job-name {
+    display: block; /* Hiển thị tên công việc */
+    font-weight: bold; /* Làm đậm tên công việc */
+    text-align: left;
+}
+
+.job-salary {
+    display: block; /* Hiển thị mức lương */
+    color: #666; /* Màu chữ cho mức lương */
+    text-align: left;
+}
+
+.btn-remove {
+    background-color: #f44336; /* Màu nền cho nút xóa */
+    color: white; /* Màu chữ cho nút xóa */
+    border: none; /* Loại bỏ viền của nút xóa */
+    padding: 5px 10px; /* Khoảng cách bên trong nút xóa */
+    border-radius: 4px; /* Bo tròn các góc của nút xóa */
+    cursor: pointer; /* Con trỏ khi di chuột vào nút xóa */
+}
+
+    .btn-remove:hover {
+        background-color: #c62828; /* Thay đổi màu nền khi di chuột vào nút xóa */
+    }
+
+#messagesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message.user {
+    background-color: #007bff;
+    color: #fff;
+    text-align: right;
+    padding: 10px;
+    border-radius: 15px;
+    align-self: flex-end;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.message.admin {
+    background-color: #28a745;
+    color: #fff;
+    text-align: left;
+    padding: 10px;
+    border-radius: 15px;
+    align-self: flex-start;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+    .back-to-top:hover {
+        background-color: #0056b3;
+    }
+
+.chat-icon {
+    position: fixed;
+    bottom: 110px;
+    right: 30px;
+    background-color: #007bff; 
+    cursor: pointer;
+    z-index: 1000;
+    border-radius: 0 0 10px 10px;
+    padding: 10px;
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .chat-icon i {
+        font-size: 24px;
+        color: white;
+    }
+
+    .chat-icon span {
+        font-size: 13px;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
+.chatbot-icon {
+    position: fixed;
+    right: 30px;
+    cursor: pointer;
+    z-index: 1000;
+    width: 60px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px 10px 0 0;
+}
+
+.chat-icon {
+    bottom: 110px;
+    background-color: #00B050;
+}
+
+.chatbot-icon {
+    bottom: 180px; /* nằm phía trên icon hỗ trợ */
+    background-color: #007bff; /* màu xanh dương cho chatbot */
+}
+
+    .chat-icon i,
+    .chatbot-icon i {
+        font-size: 24px;
+        color: white;
+    }
+
+    .chat-icon span,
+    .chatbot-icon span {
+        font-size: 13px;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
+#chat-popup {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 320px;
+    max-height: 450px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+    #chat-popup header {
+        background: #4a90e2;
+        color: white;
+        padding: 10px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        #chat-popup header .close-btn {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+#chat-body {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    line-height: 1.4;
+    max-width: 80%;
+}
+
+.user {
+    background: #4a90e2;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.bot {
+    background: #e1e8f0;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+#chat-footer {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+#chat-input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 1rem;
+    outline: none;
+}
+
+#send-btn {
+    background: #4a90e2;
+    color: white;
+    border: none;
+    padding: 0 16px;
+    cursor: pointer;
+}

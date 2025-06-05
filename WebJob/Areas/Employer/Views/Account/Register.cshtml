@@ -1,0 +1,361 @@
+﻿@model WebJob.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Đăng ký tài khoản nhà tuyển dụng";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<div class="login-container">
+    <div class="login-left-panel">
+        <div class="left-content">
+            <form id="registerForm" class="login-form" action="@Url.Action("Register", "Account", new { area = "Employer" })" method="post">
+                @Html.AntiForgeryToken()
+                <h2>Đăng ký tài khoản nhà tuyển dụng</h2>
+                <hr />
+                <div id="validationSummary" class="text-danger" style="display:none;"></div>
+
+                <div class="form-group">
+                    <label for="FullName">Họ và tên</label>
+                    <input type="text" id="FullName" name="FullName" class="form-control" placeholder="Họ và tên" required />
+                    <span id="fullNameError" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="UserName">Tên đăng nhập</label>
+                    <input type="text" id="UserName" name="UserName" class="form-control" placeholder="Tên đăng nhập" required />
+                    <span id="userNameError" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="Email">Email</label>
+                    <input type="email" id="Email" name="Email" class="form-control" placeholder="Email" required />
+                    <span id="emailError" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="Phone">Số điện thoại</label>
+                    <input type="tel" id="Phone" name="Phone" class="form-control" placeholder="Số điện thoại" required />
+                    <span id="phoneError" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="Password">Mật khẩu</label>
+                    <input type="password" id="Password" name="Password" class="form-control" placeholder="Mật khẩu" required />
+                    <span id="passwordError" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="ConfirmPassword">Xác nhận mật khẩu</label>
+                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" placeholder="Xác nhận mật khẩu" required />
+                    <span id="confirmPasswordError" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn-login">Đăng ký</button>
+                </div>
+
+                <div class="register-link">
+                    Đã có tài khoản?
+                    <a href="@Url.Action("Login", "Account", new { area = "Employer" })">
+                        Đăng nhập ngay
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="login-right-panel">
+        <div class="right-content">
+            <div class="logo-container">
+                <a href="/trang-chu">
+                    <img src="~/Content/assets/img/logojobtran.png" alt="Logo">
+                </a>
+            </div>
+            <h1 class="welcome-message">Chào mừng nhà tuyển dụng</h1>
+            <p class="sub-message">Đăng ký ngay để kết nối với hàng ngàn ứng viên tiềm năng và mở rộng cơ hội tuyển dụng cho doanh nghiệp của bạn</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Các hàm helper
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.style.display = 'block';
+            }
+        }
+
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.textContent = '';
+                element.style.display = 'none';
+            });
+            document.getElementById('validationSummary').style.display = 'none';
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            return re.test(email);
+        }
+
+        function validatePhone(phone) {
+            const re = /^(0|\+84)(\d{9,10})$/;
+            return re.test(phone);
+        }
+
+        function checkEmailExists(email) {
+            return fetch('/Employer/Account/CheckEmailExists', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            }).then(response => response.json());
+        }
+
+        // Kiểm tra số điện thoại tồn tại
+        function checkPhoneExists(phone) {
+            return fetch('/Employer/Account/CheckEmailExists', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ phone: phone })
+            }).then(response => response.json());
+        }
+        // Xử lý submit form
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearErrors();
+
+            let isValid = true;
+            const errors = [];
+            const validationSummary = document.getElementById('validationSummary');
+
+            // Lấy giá trị các trường
+            const fullName = document.getElementById('FullName').value.trim();
+            const userName = document.getElementById('UserName').value.trim();
+            const email = document.getElementById('Email').value.trim();
+            const phone = document.getElementById('Phone').value.trim();
+            const password = document.getElementById('Password').value;
+            const confirmPassword = document.getElementById('ConfirmPassword').value;
+
+            // Validate các trường
+            if (!fullName) {
+                showError('fullNameError', 'Vui lòng nhập họ và tên');
+                isValid = false;
+                errors.push('Vui lòng nhập họ và tên');
+            }
+
+            if (!userName) {
+                showError('userNameError', 'Vui lòng nhập tên đăng nhập');
+                isValid = false;
+                errors.push('Vui lòng nhập tên đăng nhập');
+            }
+
+            if (!email) {
+                showError('emailError', 'Vui lòng nhập email');
+                isValid = false;
+                errors.push('Vui lòng nhập email');
+            } else if (!validateEmail(email)) {
+                showError('emailError', 'Email không hợp lệ');
+                isValid = false;
+                errors.push('Email không hợp lệ');
+            }
+
+            if (!phone) {
+                showError('phoneError', 'Vui lòng nhập số điện thoại');
+                isValid = false;
+                errors.push('Vui lòng nhập số điện thoại');
+            } else if (!validatePhone(phone)) {
+                showError('phoneError', 'Số điện thoại không hợp lệ');
+                isValid = false;
+                errors.push('Số điện thoại không hợp lệ');
+            }
+
+            if (!password) {
+                showError('passwordError', 'Vui lòng nhập mật khẩu');
+                isValid = false;
+                errors.push('Vui lòng nhập mật khẩu');
+            } else if (password.length < 6) {
+                showError('passwordError', 'Mật khẩu phải có ít nhất 6 ký tự');
+                isValid = false;
+                errors.push('Mật khẩu phải có ít nhất 6 ký tự');
+            }
+
+            if (!confirmPassword) {
+                showError('confirmPasswordError', 'Vui lòng xác nhận mật khẩu');
+                isValid = false;
+                errors.push('Vui lòng xác nhận mật khẩu');
+            } else if (password !== confirmPassword) {
+                showError('confirmPasswordError', 'Mật khẩu không khớp');
+                isValid = false;
+                errors.push('Mật khẩu không khớp');
+            }
+
+            // Nếu các validate cơ bản đúng thì kiểm tra email/phone tồn tại
+            if (isValid) {
+                Promise.all([
+                    checkEmailExists(email),
+                    checkPhoneExists(phone)
+                ]).then(([emailValid, phoneValid]) => {
+                    if (emailValid && phoneValid) {
+                        validationSummary.style.display = 'none';
+                        this.submit(); // Submit form nếu tất cả hợp lệ
+                    } else {
+                        validationSummary.style.display = 'block';
+                        validationSummary.innerHTML = '';
+
+                        if (!emailValid) {
+                            showError('emailError', 'Email này đã được sử dụng');
+                            validationSummary.innerHTML += '<div>Email này đã được sử dụng</div>';
+                        }
+
+                        if (!phoneValid) {
+                            showError('phoneError', 'Số điện thoại này đã được sử dụng');
+                            validationSummary.innerHTML += '<div>Số điện thoại này đã được sử dụng</div>';
+                        }
+                    }
+                });
+            } else {
+                validationSummary.style.display = 'block';
+                validationSummary.innerHTML = errors.map(error => `<div>${error}</div>`).join('');
+            }
+        });
+    });
+    </script>
+}
+
+<style>
+    /* Giữ nguyên các style từ trang đăng nhập */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #333;
+        height: 100vh;
+        display: flex;
+    }
+
+    .login-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+
+    .login-left-panel {
+        flex: 7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        padding: 40px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .login-right-panel {
+        flex: 3;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background-image: linear-gradient(to bottom right, #f5f7fa, #e4e8eb);
+    }
+
+    .left-content {
+        max-width: 800px;
+        width: 100%;
+    }
+
+    .right-content {
+        max-width: 500px;
+        text-align: center;
+        padding: 0 40px;
+    }
+
+    .logo-container img {
+        max-height: 70px;
+        margin-bottom: 30px;
+    }
+
+    .welcome-message {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .sub-message {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .login-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    .login-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .login-form .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 12px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-login:hover {
+            background-color: #0d62c9;
+        }
+
+    .register-link {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 14px;
+    }
+
+        .register-link a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 13px;
+        display: none;
+        margin-top: 5px;
+    }
+
+    .text-danger {
+        color: #dc3545;
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+</style>

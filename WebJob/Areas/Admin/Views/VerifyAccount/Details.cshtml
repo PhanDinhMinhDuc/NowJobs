@@ -1,0 +1,122 @@
+﻿@model WebJob.Models.EF.EmployerVerification
+@using WebJob.Models.Enum
+@{
+    ViewBag.Title = "Chi tiết tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h2 class="text-center">Thông tin chi tiết tài khoản</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Tên công ty:</strong> @Model.CompanyName</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Số điện thoại:</strong> @Model.PhoneNumber</p>
+            <p><strong>Số giấy phép kinh doanh:</strong> @Model.BusinessLicenseNumber</p>
+
+            <p>
+                <strong>Trạng thái:</strong>
+                @switch (Model.Status)
+                {
+                    case (int)VerificationStatus.Approved:
+                        <span class="badge badge-success">Đã xác thực</span>
+                        break;
+                    case (int)VerificationStatus.Pending:
+                        <span class="badge badge-warning">Chờ xác thực</span>
+                        break;
+                    case (int)VerificationStatus.Rejected:
+                        <span class="badge badge-danger">Từ chối</span>
+                        break;
+                    default:
+                        <span class="badge badge-secondary">Không xác định</span>
+                        break;
+                }
+
+                <!-- Form thay đổi trạng thái -->
+                <div class="btn-group ml-2">
+                    @if (Model.Status != (int)VerificationStatus.Approved)
+                    {
+                        <form action="@Url.Action("Approve", "VerifyAccount", new { id = Model.Id })" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-success btn-sm">Duyệt</button>
+                        </form>
+                    }
+
+                    @if (Model.Status != (int)VerificationStatus.Rejected)
+                    {
+                        <form action="@Url.Action("Reject", "VerifyAccount", new { id = Model.Id })" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Từ chối</button>
+                        </form>
+                    }
+
+                    @if (Model.Status != (int)VerificationStatus.Pending)
+                    {
+                        <form action="@Url.Action("ChangeStatus", "VerifyAccount", new { id = Model.Id, newStatus = (int)VerificationStatus.Pending })" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning btn-sm">Đặt lại chờ</button>
+                        </form>
+                    }
+                </div>
+            </p>
+
+            <p>
+                <strong>Tài liệu xác minh:</strong>
+                @if (!string.IsNullOrEmpty(Model.VerificationDocumentPath))
+                {
+                    <!-- Nút Xem tài liệu -->
+                    <a href="@Url.Content(Model.VerificationDocumentPath)" target="_blank" class="btn btn-primary btn-sm">
+                        Xem tài liệu
+                    </a>
+
+                    <!-- Nút Tải xuống -->
+                    <a href="@Url.Content(Model.VerificationDocumentPath)" download class="btn btn-success btn-sm">
+                        Tải xuống
+                    </a>
+                }
+                else
+                {
+                    <span>Không có tài liệu xác minh</span>
+                }
+            </p>
+        </div>
+    </div>
+
+    <a href="@Url.Action("Index", "VerifyAccount")" class="btn btn-secondary mt-4">Quay lại danh sách</a>
+</div>
+
+<style>
+    .badge-success {
+        background-color: #28a745;
+        color: white;
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+        color: black;
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+        color: white;
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+        color: white;
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+
+    .btn-group {
+        display: inline-flex;
+        gap: 5px;
+    }
+</style>

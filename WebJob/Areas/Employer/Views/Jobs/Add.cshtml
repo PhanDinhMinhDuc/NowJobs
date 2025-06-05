@@ -1,0 +1,359 @@
+﻿@model WebJob.Models.ViewModels.JobViewModel
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Areas/Employer/Views/Shared/_LayoutEmpty.cshtml";
+}
+@using Microsoft.AspNet.Identity
+@{
+    var db = new ApplicationDbContext();
+    var userId = User.Identity.GetUserId();
+    var employerVerification = db.employerVerifications.FirstOrDefault(e => e.UserId == userId);
+    var company = employerVerification != null ? db.Companies.Find(employerVerification.CompanyId) : null;
+}
+<style>
+    .hiddendisplay {
+        display: block;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="container search-wrapper">
+        <div class="hiddendisplay row">
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-12">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="/viec-lam-da-dang">Việc làm đã đăng</a></li>
+                                <li class="breadcrumb-item active">Cập nhật việc làm</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div><!-- /.container-fluid -->
+            </section>
+
+            <section class="content">
+                <!-- Default box -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Thông tin thêm mới</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @using (Html.BeginForm("Add", "Jobs", FormMethod.Post, new { }))
+                                {
+                                    @Html.AntiForgeryToken();
+                                    @Html.ValidationSummary(true)
+
+                                    <div class="card">
+                                        <div class="card-header p-2">
+                                            <ul class="nav nav-pills">
+                                                <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Thông tin chung</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Hình ảnh</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Công ty</a></li>
+                                            </ul>
+                                        </div><!-- /.card-header -->
+                                        <div class="card-body">
+                                            <div class="tab-content">
+                                                <div class="active tab-pane" id="activity">
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Tên công việc</label>
+                                                        @Html.TextBoxFor(x => x.JobTitle, new { @class = "form-control", @placeholder = "Tên công việc" })
+                                                        @Html.ValidationMessageFor(x => x.JobTitle, null, new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="JobSkills">Kỹ năng yêu cầu</label>
+                                                        @Html.ListBoxFor(model => model.SelectedJobSkills, Model.JobSkillsList, new { @class = "form-control select2", multiple = "multiple" })
+                                                        @Html.ValidationMessageFor(model => model.SelectedJobSkills, null, new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Ngành nghề</label>
+                                                        @Html.DropDownListFor(x => x.JobCategoryID, Model.JobCategories, "Chọn ngành nghề", new { @class = "form-control" })
+                                                        @Html.ValidationMessageFor(x => x.JobCategoryID, null, new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Phúc lợi</label>
+                                                        @Html.TextAreaFor(x => x.JobBenefits, new { @class = "form-control", @placeholder = "Mô tả công việc", @id = "txtbenefits" })
+                                                        @Html.ValidationMessageFor(x => x.JobBenefits, null, new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Mô tả công việc</label>
+                                                        @Html.TextAreaFor(x => x.JobDescription, new { @class = "form-control", @placeholder = "Mô tả công việc", @id = "txtContent" })
+                                                        @Html.ValidationMessageFor(x => x.JobDescription, null, new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="exampleInputEmail1">Yêu cầu công việc</label>
+                                                        @Html.TextAreaFor(x => x.JobRequirements, new { @class = "form-control", @placeholder = "Yêu cầu công việc", @id = "txtRequire" })
+                                                        @Html.ValidationMessageFor(x => x.JobRequirements, null, new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-2">
+                                                            <div class="form-group">
+                                                                <label for="Salary">Mức lương</label>
+                                                                @Html.DropDownListFor(x => x.SalaryID, Model.Salaries, "Chọn mức lương", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(x => x.SalaryID, null, new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <div class="form-group">
+                                                                <label for="Location">Thành phố</label>
+                                                                @Html.DropDownListFor(x => x.LocationID, Model.Locations, "Chọn thành phố", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(x => x.LocationID, null, new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <div class="form-group">
+                                                                <label for="Position">Vị trí</label>
+                                                                @Html.DropDownListFor(x => x.PositionID, Model.Positions, "Chọn vị trí ", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(x => x.PositionID, null, new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                                <label for="Experience">Kinh nghiệm</label>
+                                                                @Html.DropDownListFor(model => model.ExperienceID, Model.Experiences, "-- Chọn kinh nghiệm --", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.ExperienceID)
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                                <label for="EndDate">Ngày hết hạn</label>
+                                                                @Html.TextBoxFor(x => x.EndDate, new { @class = "form-control", @placeholder = "Ngày hết hạn", @type = "date" })
+                                                                @Html.ValidationMessageFor(x => x.EndDate, null, new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    @Html.CheckBoxFor(x => x.IsNow, new { @class = "custom-control-input", @id = "customCheckbox" })
+                                                                    <label for="customCheckbox" class="custom-control-label">Cần tuyển gấp</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    @Html.HiddenFor(x => x.CompanyID, new { @value = company?.CompanyID })
+                                                    @Html.HiddenFor(x => x.UserId, new { @value = userId })
+
+                                                    <div class="form-group ">
+                                                        <button type="submit" class="btn btn-success">Lưu</button>
+                                                        <a href="/employer/jobs" class="btn btn-danger">Quay lại</a>
+                                                    </div>
+                                                </div>
+
+                                                <!-- /.tab-pane -->
+                                                <div class="tab-pane" id="timeline">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="alert alert-info">
+                                                                <i class="fas fa-info-circle"></i> Tải lên hình ảnh liên quan đến công việc hoặc công ty
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12 text-right">
+                                                            <input type="button" class="btn btn-primary" id="iTaiAnh" onclick="BrowseServer();" value="Tải ảnh" />
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <table class="table table-hover" id="tbAnhCongTy">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="text-center">STT</th>
+                                                                        <th class="text-center">Ảnh</th>
+                                                                        <th class="text-center">Ảnh đại diện</th>
+                                                                        <th class="text-center">Thao tác</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="tbHtml">
+                                                                    @if (Model != null && Model.CompanyImages != null && Model.CompanyImages.Any())
+                                                                    {
+                                                                        int i = 1;
+                                                                        foreach (var image in Model.CompanyImages)
+                                                                        {
+                                                                            <tr id="trow_@i">
+                                                                                <td class="text-center">@i</td>
+                                                                                <td class="text-center">
+                                                                                    <img width="80" src="@image.ImageURL" alt="Ảnh công ty" />
+                                                                                    <input type="hidden" value="@image.ImageURL" name="Images" />
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    <input type="radio" value="@i" name="rDefault" @(image.IsDefault ? "checked" : "") />
+                                                                                </td>
+                                                                                <td class="text-center">
+                                                                                    <a href="#" data-id="@i" class="btn btn-sm btn-danger btnXoaAnh">Xóa</a>
+                                                                                </td>
+                                                                            </tr>
+                                                                            i++;
+                                                                        }
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                            <input type="hidden" id="tCurrentId" value="@(Model?.CompanyImages?.Count ?? 0)" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- /.tab-pane -->
+                                                <div class="tab-pane" id="settings">
+                                                    <div class="form-horizontal">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Tên công ty</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control"
+                                                                       value="@(company?.CompanyName)" placeholder="Tên công ty"  />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Email</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="email" class="form-control"
+                                                                       value="@(company?.CompanyEmail)" placeholder="Email công ty"  />
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Mô tả công ty</label>
+                                                            <div class="col-sm-10">
+                                                                <textarea class="form-control" placeholder="Mô tả công ty">@(company?.CompanyDescription)</textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Địa chỉ</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control"
+                                                                       value="@(company?.CompanyAddress)" placeholder="Địa chỉ công ty"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- /.tab-pane -->
+                                            </div>
+                                            <!-- /.tab-content -->
+                                        </div><!-- /.card-body -->
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                    </div>
+                    <!-- /.card-footer-->
+                </div>
+                <!-- /.card -->
+            </section>
+        </div>
+    </div>
+</div>
+<style>
+    .select2-container--default .select2-selection--multiple {
+        min-height: 38px;
+        border: 1px solid #ced4da;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        color: black !important;
+    }
+</style>
+
+
+<!-- Main content -->
+<!-- /.content -->
+@section scripts{
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            CKEDITOR.replace('txtContent', {
+                customConfig: '/content/ckeditor/config.js',
+                extraAllowedContent: 'span',
+            });
+        });
+        $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Chọn các kỹ năng yêu cầu",
+                allowClear: true
+            });
+        });
+        $(document).ready(function () {
+            CKEDITOR.replace('txtRequire', {
+                customConfig: '/content/ckeditor/config.js',
+                extraAllowedContent: 'span',
+            });
+        });
+        $(document).ready(function () {
+            CKEDITOR.replace('txtbenefits', {
+                customConfig: '/content/ckeditor/config.js',
+                extraAllowedContent: 'span',
+            });
+        });
+
+        $('body').on('click', '.btnXoaAnh', function () {
+            var conf = confirm('Bạn có muốn xóa ảnh này không?');
+            if (conf === true) {
+                var _id = $(this).data('id');
+
+                //$('#trow_' + _id).remove();
+                $('#trow_' + _id).fadeTo('fast', 0.5, function () {
+                    $(this).slideUp('fast', function () { $(this).remove(); });
+                });
+                var temp = $('#tCurrentId').val();
+                var currentId = parseInt(temp) - 1;
+                $('#tCurrentId').val(currentId);
+            }
+        });
+
+        function BrowseServer(field) {
+            var finder = new CKFinder();
+            finder.selectActionFunction = function (fileUrl) {
+                addImageCompany(fileUrl);
+            };
+            finder.popup();
+        }
+
+        function addImageCompany(url) {
+            var temp = $('#tCurrentId').val();
+            var currentId = parseInt(temp) + 1;
+            var str = "";
+            if (currentId == 1) {
+                str += `
+                                                                      <tr id="trow_${currentId}">
+                                                                         <td class="text-center">${currentId}</td>
+                                                                         <td class="text-center"><img width="80" src="${url}" alt="Alternate Text" /> <input type='hidden' value="${url}" name="Images" /> </td>
+                                                                         <td class="text-center"><input type="radio" value= "${currentId}" name="rDefault" checked = "checked" /></td>
+                                                                         <td class="text-center"><a href="#" data-id="${currentId}" class="btn btn-sm btn-danger btnXoaAnh">Xóa</a></td>
+                                                                      </tr>
+                                                                            `;
+            }
+
+            else {
+                str += `
+                                                                      <tr id="trow_${currentId}">
+                                                                         <td class="text-center">${currentId}</td>
+                                                                         <td class="text-center"><img width="80" src="${url}" alt="Alternate Text" /> <input type='hidden' value="${url}" name="Images" /></td>
+                                                                         <td class="text-center"><input type="radio" value= "${currentId}" name="rDefault" /></td>
+                                                                         <td class="text-center"><a href="#"  data-id="${currentId}" class="btn btn-sm btn-danger btnXoaAnh">Xóa</a></td>
+                                                                      </tr>
+                                                                            `;
+            }
+            $('#tbHtml').append(str);
+
+            $('#tCurrentId').val(currentId);
+
+
+        }
+    </script>
+
+}
+

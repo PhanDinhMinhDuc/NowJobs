@@ -1,0 +1,77 @@
+﻿@model IEnumerable<WebJob.Models.EF.Product>
+
+@{
+    ViewBag.Title = "Danh sách gói dịch vụ";
+    Layout = "~/Areas/Employer/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">@ViewBag.Title</h2>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 package-card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="text-center">@item.Title</h4>
+                    </div>
+                    <div class="card-body">
+                        @if (item.PriceSale > 0)
+                        {
+                            <div>
+                                <span class="display-4 text-primary">@item.PriceSale.Value.ToString("N0")</span>
+                                <span class="text-muted"> VND</span>
+                            </div>
+                            <div>
+                                <del class="text-muted">@item.Price.ToString("N0") VND</del>
+                                <span class="badge badge-danger ml-2">
+                                    Tiết kiệm @((item.Price - item.PriceSale.Value).ToString("N0")) VND
+                                </span>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="display-4 text-primary">@item.Price.ToString("N0")</span>
+                            <span class="text-muted"> VND</span>
+                        }
+
+                        <div class="package-features mb-4">
+                            @Html.Raw(item.Description)
+                        </div>
+
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success"></i> Số bài đăng: @((item.Quantity > 9999) ? "Không giới hạn" : item.Quantity.ToString())
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-check-circle text-success"></i> Thời hạn: @item.ValidityDays ngày
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        @Html.ActionLink("Chi tiết", "Details", new { id = item.ProductID }, new { @class = "btn btn-outline-primary btn-block" })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .package-card {
+        transition: transform 0.3s;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+        .package-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+    .package-features {
+        min-height: 100px;
+    }
+</style>

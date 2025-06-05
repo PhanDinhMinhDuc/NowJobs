@@ -1,0 +1,226 @@
+﻿@model IPagedList<WebJob.Models.EF.Job>
+@using PagedList.Mvc;
+@using PagedList;
+
+@{
+    ViewBag.Title = "Danh sách công việc";
+    Layout = "~/Areas/Employer/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="container search-wrapper">
+        <div class="row">
+            <h2>Công việc đã đăng</h2>
+
+
+            <!-- Content Header (Page header) -->
+            <!-- Bộ lọc công việc -->
+            <!-- Danh sách công việc -->
+            <div class="col-md-12 col-sm-12 col-12">
+                <h4 class="search-find">Tìm thấy @Model.TotalItemCount công việc</h4>
+                <div class="job-board-wrap">
+                    <div class="job-group">
+                        @if (Model != null && Model.Any())
+                        {
+                            var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-striped">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Hình ảnh</th>
+                                            <th>Tiêu đề</th>
+                                            <th>Hạn nộp</th>
+                                            <th>Trạng thái</th>
+                                            <th>CV Ứng tuyển</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            var strImage = "";
+                                            var img = item.CompanyImages.FirstOrDefault(x => x.IsDefault);
+                                            if (img != null)
+                                            {
+                                                strImage = img.ImageURL;
+                                            }
+
+                                            <tr id="trow_@item.JobID">
+                                                <td>@i</td>
+                                                <td>
+                                                    <img src="@strImage" alt="job-logo" width="60" height="60" style="object-fit:cover" />
+                                                </td>
+                                                <td>
+                                                    <a href="/Employer/Jobs/Details/@item.JobID">@item.JobTitle</a>
+                                                </td>
+                                                <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
+                                                <td>
+                                                    @(item.IsActive ? "Đã được duyệt" : "Đang chờ xét duyệt")
+                                                </td>
+                                                <td>
+                                                    <a href="@Url.Action("ApplicantsByJob", "Application", new { area = "Employer", jobId = item.JobID })" class="btn btn-sm btn-info">
+                                                        Xem (@item.JobApplications.Count())
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="/Employer/Jobs/Edit/@item.JobID" class="btn btn-sm btn-primary">Chỉnh sửa</a>
+                                                    <a href="#" data-id="@item.JobID" class="btn btn-sm btn-danger delete-job">Xóa</a>
+                                                </td>
+                                            </tr>
+                                            i++;
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="no-data-message">Không có công việc nào được lưu bởi tài khoản này.</p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Phân trang -->
+                <div class="pagination-container">
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function () {
+            // xóa 1 đối tượng
+            $('body').on('click', '.delete-job', function () {
+                var id = $(this).data("id"); // Lấy ID của công việc cần xóa
+                var conf = confirm('Bạn có chắc chắn muốn xóa công việc này?'); 
+                if (conf === true) {
+                    $.ajax({
+                        url: '/employer/jobs/delete',
+                        type: 'POST',                 
+                        data: { id: id },             
+                        success: function (rs) {
+
+                            if (rs.success) {
+                                //// Nếu xóa thành công
+                                //alert(rs.message);
+                                $('#trow_' + id).remove();
+                                location.reload();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+}
+
+
+<style>
+    span.salary-min::after {
+        display: none;
+    }
+
+    .selected-job {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .filter-topic {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .filter-action {
+        text-decoration: none;
+        font-weight: normal;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80%;
+    }
+
+    .filter-count {
+        font-size: 14px;
+        color: #999;
+        flex-shrink: 0;
+    }
+
+    .no-data-message {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 18px;
+        color: #999;
+    }
+
+    /*css phân trang*/
+    .pagination-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .pagination-container .pagination {
+            display: inline-flex;
+            justify-content: center;
+            padding-left: 0;
+            list-style: none;
+            border-radius: 5px;
+        }
+
+            .pagination-container .pagination li {
+                margin: 0 5px;
+            }
+
+                .pagination-container .pagination li a,
+                .pagination-container .pagination li span {
+                    display: block;
+                    padding: 8px 15px;
+                    color: #007bff;
+                    text-decoration: none;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    font-size: 14px;
+                    background-color: #fff;
+                    transition: background-color 0.3s ease, color 0.3s ease;
+                }
+
+                    .pagination-container .pagination li a:hover,
+                    .pagination-container .pagination li span:hover {
+                        background-color: #007bff;
+                        color: #fff;
+                    }
+
+            .pagination-container .pagination .active a,
+            .pagination-container .pagination .active span {
+                background-color: #007bff;
+                color: #fff;
+                border-color: #007bff;
+            }
+
+            .pagination-container .pagination .disabled a,
+            .pagination-container .pagination .disabled span {
+                color: #ccc;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+
+            .pagination-container .pagination .previous a,
+            .pagination-container .pagination .next a {
+                font-weight: bold;
+            }
+
+                .pagination-container .pagination .previous a:hover,
+                .pagination-container .pagination .next a:hover {
+                    background-color: #0056b3;
+                    color: #fff;
+                }
+</style>

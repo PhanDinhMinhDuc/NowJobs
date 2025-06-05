@@ -1,0 +1,89 @@
+﻿@using Microsoft.AspNet.Identity
+@using WebJob.Models
+@using WebJob.Models.Enum
+@{
+    var userId = User.Identity.GetUserId();
+    var db = new ApplicationDbContext();
+    var verification = db.employerVerifications.FirstOrDefault(v => v.UserId == userId);
+    var currentUser = db.Users.Find(userId);
+}
+
+
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-light-primary elevation-4" style="background-color: #f8f9fa;">
+    <!-- Brand Logo -->
+    <a href="/Employer/Home" class="brand-link bg-white d-flex flex-column text-center" style="padding: 0.5rem; text-decoration: none;">
+        <img src="~/Content/assets/img/logojobtran.png" alt="JobTran Logo" class="brand-image mb-1" style="height: 30px; width: auto; object-fit: contain;">
+        <span class="brand-text font-weight-bold" style="font-family: 'Roboto', sans-serif; color: #343a40; font-size: 0.9rem;">Nhà tuyển dụng</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-header text-uppercase text-muted">TỔNG QUAN</li>
+
+                <li class="nav-item">
+                    <a href="/Employer/Home" class="nav-link text-dark">
+                        <i class="nav-icon fas fa-tachometer-alt text-primary"></i>
+                        <p>Bảng điều khiển</p>
+                    </a>
+                </li>
+                @if (verification?.Status == (int)VerificationStatus.Approved)
+                {
+                    <li class="nav-header text-uppercase text-muted mt-2">QUẢN LÝ</li>
+                    <li class="nav-item">
+                        <a href="/cv-ung-tuyen" class="nav-link text-dark">
+                            <i class="nav-icon fas fa-list text-info"></i>
+                            <p>Danh sách ứng tuyển</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Employer/Jobs/Add" class="nav-link text-dark">
+                            <i class="nav-icon fas fa-plus-circle text-success"></i>
+                            <p>Đăng tin tuyển dụng</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/Employer/Jobs" class="nav-link text-dark">
+                            <i class="nav-icon fas fa-briefcase text-warning"></i>
+                            <p>Việc làm đã đăng</p>
+                        </a>
+                    </li>
+                }
+
+                <li class="nav-header text-uppercase text-muted mt-2">TÀI KHOẢN</li>
+
+                @if (verification?.Status == (int)VerificationStatus.Approved)
+                {
+                    <li class="nav-item">
+                        <a href="/Employer/Employer/VerificationDetails" class="nav-link text-dark">
+                            <i class="nav-icon fas fa-check-circle text-success"></i>
+                            <p>Thông tin xác thực</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Employer/Package" class="nav-link text-dark">
+                            <i class="nav-icon fas fa-gift text-danger"></i>
+                            <p>Gói nhà tuyển dụng</p>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a href="/Employer/Employer/VerificationDetails" class="nav-link text-dark">
+                            <i class="nav-icon fas fa-user-check text-info"></i>
+                            <p>Xác thực tài khoản</p>
+                        </a>
+                    </li>
+                }
+
+            </ul>
+        </nav>
+    </div>
+</aside>
+

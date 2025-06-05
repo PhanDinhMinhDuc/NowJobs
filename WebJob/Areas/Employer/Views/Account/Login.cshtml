@@ -1,0 +1,271 @@
+﻿@using WebJob.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Đăng nhập";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<div class="login-container">
+    <div class="login-left-panel">
+        <div class="left-content">
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "login-form", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    <label>Tên đăng nhập</label>
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Tên đăng nhập" })
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Mật khẩu" })
+                    <a href="/account/ForgotPassword" class="forgot-password">Quên mật khẩu</a>
+                </div>
+
+                <div class="form-group remember-me">
+                    @Html.CheckBoxFor(m => m.RememberMe)
+                    @Html.LabelFor(m => m.RememberMe)
+                </div>
+
+                <button type="submit" class="btn-login">Đăng nhập</button>
+            }
+
+            <div class="social-login">
+                <div class="divider">Hoặc đăng nhập bằng</div>
+                <div class="social-buttons">
+                    <a href="#" class="btn-social google">Google</a>
+                    <a href="#" class="btn-social facebook">Facebook</a>
+                    <a href="#" class="btn-social linkedin">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="register-link">
+                Bạn chưa có tài khoản? @Html.ActionLink("Đăng ký ngay", "Register")
+            </div>
+
+            <div class="support-info">
+                Bạn gặp khó khăn khi tạo tài khoản?<br>
+                Vui lòng gọi tới số 0935592218 (giờ hành chính).
+            </div>
+        </div>
+    </div>
+
+    <div class="login-right-panel">
+        <div class="right-content">
+            <div class="logo-container">
+                <a href="/trang-chu">
+                    <img src="~/Content/assets/img/logojobtran.png" alt="Logo">
+                </a>
+            </div>
+            <h1 class="welcome-message">Chào mừng nhà tuyển dụng</h1>
+            <p class="sub-message">Kết nối với những ứng viên tiềm năng và tìm kiếm nhân tài cho tổ chức của bạn</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<style>
+    /* Base styles */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #333;
+        height: 100vh;
+        display: flex;
+    }
+
+    .login-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+
+    .login-left-panel {
+        flex: 7; /* 70% width */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        padding: 40px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .login-right-panel {
+        flex: 3; /* 30% width */
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background-image: linear-gradient(to bottom right, #f5f7fa, #e4e8eb);
+    }
+
+    .left-content {
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .right-content {
+        max-width: 500px;
+        text-align: center;
+        padding: 0 40px;
+    }
+
+    .logo-container img {
+        max-height: 70px;
+        margin-bottom: 30px;
+    }
+
+    .welcome-message {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .sub-message {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .login-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    .login-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .login-form .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .forgot-password {
+        display: block;
+        text-align: right;
+        margin-top: 5px;
+        font-size: 13px;
+        color: #1a73e8;
+        text-decoration: none;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        font-size: 14px;
+    }
+
+        .remember-me input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+    .btn-login {
+        width: 100%;
+        padding: 12px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-login:hover {
+            background-color: #0d62c9;
+        }
+
+    .social-login {
+        margin-top: 30px;
+    }
+
+    .divider {
+        position: relative;
+        text-align: center;
+        margin: 20px 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+        .divider:before, .divider:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider:before {
+            left: 0;
+        }
+
+        .divider:after {
+            right: 0;
+        }
+
+    .social-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-social {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        transition: background-color 0.2s;
+    }
+
+        .btn-social:hover {
+            background-color: #f5f5f5;
+        }
+
+    .register-link {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 14px;
+    }
+
+        .register-link a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+    .support-info {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    /* Responsive adjustments */
+</style>

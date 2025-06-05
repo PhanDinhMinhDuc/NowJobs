@@ -1,0 +1,195 @@
+﻿@model PagedList.IPagedList<WebJob.Models.ViewModels.MyAppliedJobViewModel>
+@{
+    ViewBag.Title = "Công việc đã ứng tuyển";
+    Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="container search-wrapper">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-12">
+                <div class="job-board-wrap">
+                    <div class="job-group">
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <div class="job pagi">
+                                    <div class="job-content" id="trow_@item.JobId">
+                                        <div class="job-logo">
+                                            <a href="/chi-tiet/@item.Alias-p@(item.JobId)">
+                                                <img src="@item.CompanyLogo" class="job-logo-ima" alt="job-logo" onerror="this.src='/Content/images/default-company.png'">
+                                            </a>
+                                        </div>
+                                        <div class="job-desc">
+                                            <div class="job-title">
+                                                <a href="/chi-tiet/@item.Alias-p@(item.JobId)">@item.JobTitle</a>
+                                            </div>
+                                            <div class="job-company">
+                                                <i class="fa fa-building" aria-hidden="true"></i>
+                                                <span>@item.CompanyName</span>
+                                            </div>
+                                            <div class="job-inf">
+                                                <div class="job-salary">
+                                                    <i class="fa fa-money" aria-hidden="true"></i>
+                                                    <span>@item.SalaryRange</span>
+                                                </div>
+                                                <div class="job-location">
+                                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                                    <span>@item.LocationName</span>
+                                                </div>
+                                                <div class="job-position">
+                                                    <i class="fa fa-briefcase" aria-hidden="true"></i>
+                                                    <span>@item.PositionName</span>
+                                                </div>
+                                                <div class="job-deadline">
+                                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                                    <span>Hạn nộp: @item.EndDate.Value.ToString("dd/MM/yyyy")</span>
+                                                </div>
+                                                <div class="job-applied-date">
+                                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                    <span>Ngày ứng tuyển: @item.CreatedDate.Value.ToString("dd/MM/yyyy")</span>
+                                                </div>
+                                                <div class="feedback-wrapper" id="feedback_@item.JobId">
+                                                    @Html.Action("Details", "MyApplicant", new { jobId = item.JobId })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="wrap-btn-appl">
+                                            @switch (item.ApplicationStatus)
+                                            {
+                                                case (int)WebJob.Models.Enum.ApplicationStatus.Pending:
+                                                    <span class="btn btn-info">Đã ứng tuyển</span>
+                                                    <a href="#" data-id="@item.JobId" class="btn btn-danger btnRemove">Hủy ứng tuyển</a>
+                                                    break;
+                                                case (int)WebJob.Models.Enum.ApplicationStatus.Approved:
+                                                    <span class="btn btn-success">Đã được chấp nhận</span>
+                                                    break;
+                                                case (int)WebJob.Models.Enum.ApplicationStatus.Rejected:
+                                                    <span class="btn btn-warning">Đã bị từ chối</span>
+                                                    break;
+                                                default:
+                                                    <span class="btn btn-secondary">Trạng thái không xác định</span>
+                                                    break;
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="job pagi">
+                                <div class="job-content">
+                                    <span>Bạn chưa ứng tuyển vào công việc nào</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .job-logo-ima {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 4px;
+        border: 1px solid #eee;
+    }
+
+    .job-inf {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+        .job-inf > div {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .job-inf i {
+            color: #666;
+        }
+
+    .job-title a {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        text-decoration: none;
+    }
+
+        .job-title a:hover {
+            color: #007bff;
+        }
+
+    .job-company {
+        margin-top: 5px;
+        font-size: 15px;
+        color: #444;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('body').on('click', '.btnRemove', function (e) {
+            e.preventDefault();
+            var jobId = $(this).data('id');
+            var confirmDelete = confirm('Bạn có chắc chắn muốn hủy ứng tuyển cho công việc này?');
+            if (confirmDelete) {
+                $.ajax({
+                    url: '@Url.Action("CancelApplication", "MyApplicant")',
+                    type: 'POST',
+                    data: { jobId: jobId },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            $('#trow_' + jobId).fadeOut(300, function() {
+                                $(this).remove();
+                                // Kiểm tra nếu không còn công việc nào thì hiển thị thông báo
+                                if ($('.job.pagi').length === 0) {
+                                    $('.job-group').html('<div class="job pagi"><div class="job-content"><span>Bạn chưa ứng tuyển vào công việc nào</span></div></div>');
+                                }
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra khi kết nối với server.");
+                    }
+                });
+            }
+        });
+
+
+        // Hủy tất cả ứng tuyển
+        $('body').on('click', '.btnDeleteAllJob', function (e) {
+            e.preventDefault();
+            var confirmDelete = confirm('Bạn có chắc chắn muốn hủy tất cả ứng tuyển?');
+            if (confirmDelete) {
+                $.ajax({
+                    url: '', // Đường dẫn tới phương thức hủy tất cả ứng tuyển
+                    type: 'POST',
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            location.reload(); // Làm mới trang để cập nhật lại danh sách
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra khi kết nối với server.");
+                    }
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,78 @@
+﻿@model WebJob.Models.EF.Product
+
+@{
+    ViewBag.Title = "Chi tiết gói dịch vụ";
+    Layout = "~/Areas/Employer/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center">@Model.Title</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        @if (Model.PriceSale.HasValue)
+                        {
+                            <h2 class="text-primary">@Model.PriceSale.Value.ToString("N0") VND</h2>
+                            <del class="text-muted">@Model.Price.ToString("N0") VND</del>
+                            <span class="badge badge-danger ml-2">Tiết kiệm @((Model.Price - Model.PriceSale.Value).ToString("N0")) VND</span>
+                        }
+                        else
+                        {
+                            <h2 class="text-primary">@Model.Price.ToString("N0") VND</h2>
+
+                        }
+                    </div>
+
+                    <div class="mb-4">
+                        <h4>Mô tả gói dịch vụ</h4>
+                        <div class="p-3 bg-light rounded">
+                            @Html.Raw(Model.Description)
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4>Chi tiết</h4>
+                        <div class="p-3 bg-light rounded">
+                            @Html.Raw(Model.Detail)
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded text-center">
+                                <h5><i class="fas fa-bullhorn text-primary"></i> Số bài đăng</h5>
+                                <p class="h4">@((Model.Quantity > 9999) ? "Không giới hạn" : Model.Quantity.ToString())</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded text-center">
+                                <h5><i class="fas fa-calendar-alt text-primary"></i> Thời hạn</h5>
+                                <p class="h4">@Model.ValidityDays ngày</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    @using (Html.BeginForm("Purchase", "Package", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("productId", Model.ProductID)
+
+                        <div class="form-group">
+                            <label for="quantity">Số lượng:</label>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control d-inline-block w-auto" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-shopping-cart"></i> Mua Gói Ngay
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
